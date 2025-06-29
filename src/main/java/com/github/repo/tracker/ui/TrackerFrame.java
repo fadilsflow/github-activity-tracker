@@ -27,6 +27,7 @@ public class TrackerFrame extends JFrame {
     private final JTable table;
     private final UserProfilePanel userProfilePanel;
     private List<Repo> currentRepos = List.of();
+    private String loggedInUser = null;
 
     // Komponen UI yang perlu update bahasa
     private final JLabel usernameLabel;
@@ -35,6 +36,7 @@ public class TrackerFrame extends JFrame {
     private final JButton sortStarsButton;
     private final JButton sortForksButton;
     private final JButton sortNameButton;
+    private final JButton logoutButton;
 
     private final RepoDatabase database = new RepoDatabase();
     private final GithubService service = new GithubService();
@@ -45,6 +47,16 @@ public class TrackerFrame extends JFrame {
         setSize(850, 700);
         setLocationRelativeTo(null);
 
+        // Show login dialog
+        LoginDialog loginDialog = new LoginDialog(this);
+        loginDialog.setVisible(true);
+        
+        if (!loginDialog.isLoginSuccess()) {
+            System.exit(0);
+        }
+        
+        loggedInUser = loginDialog.getLoggedInUsername();
+
         // Inisialisasi komponen dengan teks dari ResourceManager
         usernameLabel = new JLabel(ResourceManager.get("username_label"));
         searchButton = new JButton(ResourceManager.get("search"));
@@ -52,6 +64,7 @@ public class TrackerFrame extends JFrame {
         sortStarsButton = new JButton(ResourceManager.get("sort_stars"));
         sortForksButton = new JButton(ResourceManager.get("sort_forks"));
         sortNameButton = new JButton(ResourceManager.get("sort_name"));
+        logoutButton = new JButton("Logout");
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -64,6 +77,7 @@ public class TrackerFrame extends JFrame {
         searchPanel.add(usernameField);
         searchPanel.add(searchButton);
         searchPanel.add(langToggle);
+        searchPanel.add(logoutButton);
         
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.add(searchPanel, BorderLayout.NORTH);
@@ -99,11 +113,15 @@ public class TrackerFrame extends JFrame {
 
         // LISTENERS
         searchButton.addActionListener(this::onSearch);
-        usernameField.addActionListener(this::onSearch); // <-- Menambahkan listener Enter di sini
+        usernameField.addActionListener(this::onSearch);
         langToggle.addActionListener(e -> toggleLanguage());
         sortStarsButton.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getStargazersCount).reversed()));
         sortForksButton.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getForksCount).reversed()));
         sortNameButton.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getName, String.CASE_INSENSITIVE_ORDER)));
+        logoutButton.addActionListener(e -> {
+            dispose();
+            new TrackerFrame().setVisible(true);
+        });
 
         table.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
@@ -213,7 +231,7 @@ public class TrackerFrame extends JFrame {
                 userProfilePanel.updateUser(result.user);
                 currentRepos = new java.util.ArrayList<>(result.repos);
                 tableModel.setData(currentRepos);
-                SoundPlayer.play("/sounds/done.wav");
+                SoundPlayer.play("/done.mp3");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(TrackerFrame.this, e.getMessage());
             }
@@ -229,4 +247,4 @@ public class TrackerFrame extends JFrame {
             this.repos = repos;
         }
     }
-} 
+}

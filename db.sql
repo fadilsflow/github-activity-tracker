@@ -19,3 +19,10 @@ CREATE TABLE IF NOT EXISTS repo (
     html_url    VARCHAR(500),
     hash        VARCHAR(64)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Buat tabel pengguna
+CREATE TABLE IF NOT EXISTS users (
+    username    VARCHAR(255) PRIMARY KEY,
+    password    VARCHAR(64) NOT NULL,  -- SHA-256 hash
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
