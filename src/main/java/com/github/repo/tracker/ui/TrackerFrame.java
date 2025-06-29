@@ -44,7 +44,7 @@ public class TrackerFrame extends JFrame {
     public TrackerFrame() {
         super("GitHub Repo Activity Tracker");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(850, 700);
+        setSize(900, 700);
         setLocationRelativeTo(null);
 
         // Show login dialog
@@ -59,28 +59,53 @@ public class TrackerFrame extends JFrame {
 
         // Inisialisasi komponen dengan teks dari ResourceManager
         usernameLabel = new JLabel(ResourceManager.get("username_label"));
-        searchButton = new JButton(ResourceManager.get("search"));
-        langToggle = new JButton(ResourceManager.getCurrentLocale().getLanguage().equals("id") ? ResourceManager.get("lang_en") : ResourceManager.get("lang_id"));
-        sortStarsButton = new JButton(ResourceManager.get("sort_stars"));
-        sortForksButton = new JButton(ResourceManager.get("sort_forks"));
-        sortNameButton = new JButton(ResourceManager.get("sort_name"));
-        logoutButton = new JButton("Logout");
+        searchButton = createStyledButton(ResourceManager.get("search"), new Color(66, 133, 244));
+        langToggle = createStyledButton(ResourceManager.getCurrentLocale().getLanguage().equals("id") ? ResourceManager.get("lang_en") : ResourceManager.get("lang_id"), new Color(108, 117, 125));
+        sortStarsButton = createStyledButton(ResourceManager.get("sort_stars"), new Color(255, 193, 7));
+        
+        sortForksButton = createStyledButton(ResourceManager.get("sort_forks"), new Color(255, 193, 7));
+        sortNameButton = createStyledButton(ResourceManager.get("sort_name"), new Color(255, 193, 7));
+        logoutButton = createStyledButton("Logout", new Color(220, 53, 69));
+
+        // Adjust width for sort buttons
+        sortStarsButton.setPreferredSize(new Dimension(150, 35));
+        sortForksButton.setPreferredSize(new Dimension(150, 35));
+        sortNameButton.setPreferredSize(new Dimension(150, 35));
+
+        // Style the username field
+        usernameField.setPreferredSize(new Dimension(200, 35));
+        usernameField.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        usernameField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        mainPanel.setBackground(Color.WHITE);
         setContentPane(mainPanel);
 
         // 1. HEADER (Pencarian & Profil)
         userProfilePanel = new UserProfilePanel();
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        searchPanel.setBackground(Color.WHITE);
         searchPanel.add(usernameLabel);
         searchPanel.add(usernameField);
         searchPanel.add(searchButton);
-        searchPanel.add(langToggle);
-        searchPanel.add(logoutButton);
         
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.add(searchPanel, BorderLayout.NORTH);
+        JPanel rightButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        rightButtons.setBackground(Color.WHITE);
+        rightButtons.add(langToggle);
+        rightButtons.add(logoutButton);
+        
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(Color.WHITE);
+        topPanel.add(searchPanel, BorderLayout.WEST);
+        topPanel.add(rightButtons, BorderLayout.EAST);
+        
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 10));
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.add(topPanel, BorderLayout.NORTH);
         headerPanel.add(userProfilePanel, BorderLayout.CENTER);
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
@@ -101,14 +126,41 @@ public class TrackerFrame extends JFrame {
         );
         table = new JTable(tableModel);
         
-        JPanel sortPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Style the table
+        table.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        table.setRowHeight(35);
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
+        table.getTableHeader().setBackground(new Color(245, 245, 245));
+        table.getTableHeader().setForeground(new Color(51, 51, 51));
+        table.setSelectionBackground(new Color(232, 240, 254));
+        table.setSelectionForeground(Color.BLACK);
+        
+        JPanel sortPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        sortPanel.setBackground(Color.WHITE);
         sortPanel.add(sortStarsButton);
         sortPanel.add(sortForksButton);
         sortPanel.add(sortNameButton);
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
+        JPanel contentPanel = new JPanel(new BorderLayout(0, 10));
+        contentPanel.setBackground(Color.WHITE);
         contentPanel.add(sortPanel, BorderLayout.NORTH);
-        contentPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+        
+        // Create a custom scroll pane with rounded borders
+        JScrollPane scrollPane = new JScrollPane(table) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth()-1, getHeight()-1, 10, 10);
+                g2.dispose();
+            }
+        };
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setBackground(Color.WHITE);
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         // LISTENERS
@@ -153,6 +205,7 @@ public class TrackerFrame extends JFrame {
         searchButton.setText(ResourceManager.get("search"));
         langToggle.setText(ResourceManager.getCurrentLocale().getLanguage().equals("id") ? ResourceManager.get("lang_en") : ResourceManager.get("lang_id"));
         sortStarsButton.setText(ResourceManager.get("sort_stars"));
+        
         sortForksButton.setText(ResourceManager.get("sort_forks"));
         sortNameButton.setText(ResourceManager.get("sort_name"));
 
@@ -222,18 +275,41 @@ public class TrackerFrame extends JFrame {
         @Override
         protected void done() {
             searchButton.setEnabled(true);
+            userProfilePanel.setVisible(false);
             if (error != null) {
-                JOptionPane.showMessageDialog(TrackerFrame.this, error.getMessage());
+                String errorMessage;
+                if (error instanceof RuntimeException && error.getCause() != null) {
+                    errorMessage = error.getCause().getMessage();
+                } else {
+                    errorMessage = error.getMessage();
+                }
+                if (errorMessage == null || errorMessage.isEmpty()) {
+                    errorMessage = "Gagal mencari user. Periksa koneksi internet Anda.";
+                }
+                JOptionPane.showMessageDialog(
+                    TrackerFrame.this,
+                    errorMessage,
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
                 return;
             }
             try {
                 FetchResult result = get();
-                userProfilePanel.updateUser(result.user);
-                currentRepos = new java.util.ArrayList<>(result.repos);
-                tableModel.setData(currentRepos);
-                SoundPlayer.play("/done.mp3");
+                if (result != null) {
+                    userProfilePanel.updateUser(result.user);
+                    userProfilePanel.setVisible(true);
+                    currentRepos = new java.util.ArrayList<>(result.repos);
+                    tableModel.setData(currentRepos);
+                    SoundPlayer.play("/done.mp3");
+                }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(TrackerFrame.this, e.getMessage());
+                JOptionPane.showMessageDialog(
+                    TrackerFrame.this,
+                    "Terjadi kesalahan: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
             }
         }
     }
@@ -246,5 +322,43 @@ public class TrackerFrame extends JFrame {
             this.user = user;
             this.repos = repos;
         }
+    }
+
+    private JButton createStyledButton(String text, Color baseColor) {
+        JButton button = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isPressed()) {
+                    g2.setColor(new Color(210, 210, 210));
+                } else if (getModel().isRollover()) {
+                    g2.setColor(new Color(240, 240, 240));
+                } else {
+                    g2.setColor(Color.WHITE);
+                }
+                g2.fillRoundRect(0, 0, getWidth()-1, getHeight()-1, 6, 6);
+                
+                // Draw border
+                g2.setColor(new Color(32, 32, 32));
+                g2.setStroke(new BasicStroke(1));
+                g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 6, 6);
+                
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        
+        // Make sort buttons wider
+        int width = text.startsWith("Sort by") ? 150 : 120;
+        button.setPreferredSize(new Dimension(width, 35));
+        button.setFont(new Font("SansSerif", Font.BOLD, 14));
+        button.setForeground(new Color(32, 32, 32));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        return button;
     }
 }

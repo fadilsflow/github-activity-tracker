@@ -48,10 +48,19 @@ public class GithubService {
                 .header("Accept", "application/vnd.github+json")
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) {
-            throw new IOException("User tidak ditemukan: " + response.statusCode());
+        
+        switch (response.statusCode()) {
+            case 200:
+                return gson.fromJson(response.body(), GitHubUser.class);
+            case 404:
+                throw new IOException("User '" + username + "' tidak ditemukan di GitHub");
+            case 403:
+                throw new IOException("Rate limit terlampaui. Silakan coba lagi nanti");
+            case 401:
+                throw new IOException("Akses tidak diizinkan. Periksa kembali username");
+            default:
+                throw new IOException("Gagal mengambil data user: HTTP " + response.statusCode());
         }
-        return gson.fromJson(response.body(), GitHubUser.class);
     }
 
     public List<Repo> fetchRepos(String username) throws IOException, InterruptedException {
