@@ -1,5 +1,7 @@
 package com.github.repo.tracker.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -14,10 +16,20 @@ public class Repo implements Serializable {
     private String name;
     private String description;
     private String language;
+    
+    @SerializedName("stargazers_count")
     private int stargazersCount;
+    
+    @SerializedName("forks_count")
     private int forksCount;
+    
+    @SerializedName("private")
     private boolean isPrivate;
+    
+    @SerializedName("updated_at")
     private Instant updatedAt;
+    
+    @SerializedName("html_url")
     private String htmlUrl;
 
     public Repo() {
