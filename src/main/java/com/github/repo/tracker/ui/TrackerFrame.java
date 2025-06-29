@@ -23,12 +23,18 @@ import java.util.concurrent.CompletableFuture;
 public class TrackerFrame extends JFrame {
 
     private final JTextField usernameField = new JTextField(20);
-    private final JButton searchButton = new JButton(ResourceManager.get("search"));
-    private final JButton langToggle = new JButton("EN");
     private final GenericTableModel<Repo> tableModel;
     private final JTable table;
     private final UserProfilePanel userProfilePanel;
     private List<Repo> currentRepos = List.of();
+
+    // Komponen UI yang perlu update bahasa
+    private final JLabel usernameLabel;
+    private final JButton searchButton;
+    private final JButton langToggle;
+    private final JButton sortStarsButton;
+    private final JButton sortForksButton;
+    private final JButton sortNameButton;
 
     private final RepoDatabase database = new RepoDatabase();
     private final GithubService service = new GithubService();
@@ -39,7 +45,14 @@ public class TrackerFrame extends JFrame {
         setSize(850, 700);
         setLocationRelativeTo(null);
 
-        // PANEL UTAMA
+        // Inisialisasi komponen dengan teks dari ResourceManager
+        usernameLabel = new JLabel(ResourceManager.get("username_label"));
+        searchButton = new JButton(ResourceManager.get("search"));
+        langToggle = new JButton(ResourceManager.getCurrentLocale().getLanguage().equals("id") ? ResourceManager.get("lang_en") : ResourceManager.get("lang_id"));
+        sortStarsButton = new JButton(ResourceManager.get("sort_stars"));
+        sortForksButton = new JButton(ResourceManager.get("sort_forks"));
+        sortNameButton = new JButton(ResourceManager.get("sort_name"));
+
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setContentPane(mainPanel);
@@ -47,7 +60,7 @@ public class TrackerFrame extends JFrame {
         // 1. HEADER (Pencarian & Profil)
         userProfilePanel = new UserProfilePanel();
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel(ResourceManager.get("username")));
+        searchPanel.add(usernameLabel);
         searchPanel.add(usernameField);
         searchPanel.add(searchButton);
         searchPanel.add(langToggle);
@@ -58,27 +71,26 @@ public class TrackerFrame extends JFrame {
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
         // 2. KONTEN (Tombol Sort & Tabel)
-        String[] columns = {"Nama", "⭐", ResourceManager.get("forks"), ResourceManager.get("updated")};
+        String[] columns = {
+            ResourceManager.get("col_name"),
+            ResourceManager.get("col_stars"),
+            ResourceManager.get("col_forks"),
+            ResourceManager.get("col_updated")
+        };
         tableModel = new GenericTableModel<>(columns,
                 Repo::getName,
                 Repo::getStargazersCount,
                 Repo::getForksCount,
-                r -> DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                r -> r.getUpdatedAt() != null ? DateTimeFormatter.ofPattern("dd-MM-yyyy")
                         .withZone(ZoneId.systemDefault())
-                        .format(r.getUpdatedAt())
+                        .format(r.getUpdatedAt()) : "N/A"
         );
         table = new JTable(tableModel);
         
         JPanel sortPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton sortStars = new JButton("Sort by Stars");
-        sortStars.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getStargazersCount).reversed()));
-        JButton sortForks = new JButton("Sort by Forks");
-        sortForks.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getForksCount).reversed()));
-        JButton sortName = new JButton("Sort by Name");
-        sortName.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getName, String.CASE_INSENSITIVE_ORDER)));
-        sortPanel.add(sortStars);
-        sortPanel.add(sortForks);
-        sortPanel.add(sortName);
+        sortPanel.add(sortStarsButton);
+        sortPanel.add(sortForksButton);
+        sortPanel.add(sortNameButton);
 
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.add(sortPanel, BorderLayout.NORTH);
@@ -87,7 +99,12 @@ public class TrackerFrame extends JFrame {
 
         // LISTENERS
         searchButton.addActionListener(this::onSearch);
+        usernameField.addActionListener(this::onSearch); // <-- Menambahkan listener Enter di sini
         langToggle.addActionListener(e -> toggleLanguage());
+        sortStarsButton.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getStargazersCount).reversed()));
+        sortForksButton.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getForksCount).reversed()));
+        sortNameButton.addActionListener(e -> sortRepos(Comparator.comparing(Repo::getName, String.CASE_INSENSITIVE_ORDER)));
+
         table.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
@@ -108,17 +125,27 @@ public class TrackerFrame extends JFrame {
 
     private void toggleLanguage() {
         Locale current = ResourceManager.getCurrentLocale();
-        Locale newLoc = current.equals(new Locale("id")) ? Locale.ENGLISH : new Locale("id");
+        Locale newLoc = current.getLanguage().equals("id") ? Locale.ENGLISH : new Locale("id", "ID");
         ResourceManager.setLocale(newLoc);
         updateTexts();
     }
 
     private void updateTexts() {
+        usernameLabel.setText(ResourceManager.get("username_label"));
         searchButton.setText(ResourceManager.get("search"));
-        langToggle.setText(ResourceManager.getCurrentLocale().equals(Locale.ENGLISH) ? "ID" : "EN");
-        String[] columns = {"Nama", "⭐", ResourceManager.get("forks"), ResourceManager.get("updated")};
+        langToggle.setText(ResourceManager.getCurrentLocale().getLanguage().equals("id") ? ResourceManager.get("lang_en") : ResourceManager.get("lang_id"));
+        sortStarsButton.setText(ResourceManager.get("sort_stars"));
+        sortForksButton.setText(ResourceManager.get("sort_forks"));
+        sortNameButton.setText(ResourceManager.get("sort_name"));
+
+        String[] columns = {
+            ResourceManager.get("col_name"),
+            ResourceManager.get("col_stars"),
+            ResourceManager.get("col_forks"),
+            ResourceManager.get("col_updated")
+        };
         for (int i = 0; i < columns.length; i++) {
-            table.getColumnModel().getColumn(i).setHeaderValue(tableModel.getColumnName(i));
+            table.getColumnModel().getColumn(i).setHeaderValue(columns[i]);
         }
         table.getTableHeader().repaint();
     }
@@ -126,7 +153,7 @@ public class TrackerFrame extends JFrame {
     private void onSearch(ActionEvent evt) {
         String username = usernameField.getText().trim();
         if (username.isEmpty()) {
-            JOptionPane.showMessageDialog(this, ResourceManager.get("empty_username"));
+            JOptionPane.showMessageDialog(this, ResourceManager.get("empty_username"), "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
         searchButton.setEnabled(false);
@@ -145,50 +172,35 @@ public class TrackerFrame extends JFrame {
         @Override
         protected FetchResult doInBackground() {
             try {
-                // Jalankan pengambilan data user dan repo secara paralel
                 CompletableFuture<GitHubUser> userFuture = CompletableFuture.supplyAsync(() -> {
-                    try {
-                        return service.fetchUser(username);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+                    try { return service.fetchUser(username); } 
+                    catch (Exception e) { throw new RuntimeException(e); }
                 });
 
                 CompletableFuture<List<Repo>> reposFuture = CompletableFuture.supplyAsync(() -> {
                     try {
-                        // 1. Ambil data repo dari network
                         List<Repo> repos = service.fetchRepos(username);
-                        
-                        // 2. Simpan ke database (logika yang hilang)
                         String hash = HashUtil.sha256(username);
                         database.saveRepos(username, repos, hash);
-
-                        // 3. Simpan ke file serialisasi (logika yang hilang)
-                        try (java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(
-                                new java.io.FileOutputStream("repos.ser"))) {
+                        try (java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(new java.io.FileOutputStream("repos.ser"))) {
                             oos.writeObject(new java.util.ArrayList<>(repos));
                         } catch (java.io.IOException e) {
-                            e.printStackTrace(); // Log error, tapi jangan hentikan proses
+                            e.printStackTrace();
                         }
-                        
                         return repos;
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 });
 
-                // Tunggu kedua proses selesai
                 CompletableFuture.allOf(userFuture, reposFuture).join();
-
-                // Kembalikan hasilnya
                 return new FetchResult(userFuture.get(), reposFuture.get());
-
             } catch (Exception e) {
                 error = e;
                 return null;
             }
         }
-
+        
         @Override
         protected void done() {
             searchButton.setEnabled(true);
