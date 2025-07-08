@@ -1,3 +1,7 @@
+// Kelas untuk mengelola data pengguna aplikasi
+// Menangani proses login dan registrasi
+// Menyimpan username dan password (dalam bentuk hash) ke database
+
 package com.github.repo.tracker.db;
 
 import com.github.repo.tracker.util.HashUtil;

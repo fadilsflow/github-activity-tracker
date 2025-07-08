@@ -1,3 +1,7 @@
+// Model untuk data pengguna GitHub
+// Menyimpan informasi profil seperti nama, bio, avatar
+// Termasuk statistik seperti jumlah followers dan following
+
 package com.github.repo.tracker.model;
 
 import com.google.gson.annotations.SerializedName;

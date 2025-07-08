@@ -1,3 +1,7 @@
+// Dialog untuk menampilkan detail repository
+// Menampilkan informasi lengkap dan commit history
+// Memiliki tombol untuk membuka repo di browser
+
 package com.github.repo.tracker.ui;
 
 import com.github.repo.tracker.model.Commit;

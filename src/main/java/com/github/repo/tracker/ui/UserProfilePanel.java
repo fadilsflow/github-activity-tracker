@@ -1,3 +1,7 @@
+// Panel untuk menampilkan profil pengguna GitHub
+// Menampilkan avatar, bio, dan statistik
+// Menggunakan SwingWorker untuk loading avatar
+
 package com.github.repo.tracker.ui;
 
 import com.github.repo.tracker.model.GitHubUser;

@@ -1,3 +1,7 @@
+// Kelas ini menangani penyimpanan data repository GitHub ke database MySQL
+// Menyimpan informasi seperti nama repo, jumlah stars, forks, dll
+// Juga bisa mengambil data repo yang sudah tersimpan
+
 package com.github.repo.tracker.db;
 
 import com.github.repo.tracker.model.Repo;

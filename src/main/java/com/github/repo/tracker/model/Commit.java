@@ -1,3 +1,7 @@
+// Representasi dari commit di GitHub
+// Menyimpan informasi seperti pesan commit, author, dan waktu
+// Menggunakan inner class untuk struktur data yang lebih rapi
+
 package com.github.repo.tracker.model;
 
 import java.time.Instant;
@@ -18,7 +22,6 @@ public class Commit {
     public static class CommitAuthor {
         private String name;
         private Instant date;
-
         public String getName() { return name; }
         public Instant getDate() { return date; }
     }

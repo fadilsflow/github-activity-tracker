@@ -1,3 +1,7 @@
+// Dialog untuk login dan registrasi pengguna
+// Tampilan form yang modern dengan animasi
+// Menangani autentikasi menggunakan UserDatabase
+
 package com.github.repo.tracker.ui;
 
 import com.github.repo.tracker.db.UserDatabase;

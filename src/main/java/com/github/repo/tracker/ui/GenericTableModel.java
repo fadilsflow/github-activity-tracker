@@ -1,3 +1,7 @@
+// Model tabel yang bisa digunakan untuk berbagai jenis data
+// Menggunakan generic programming untuk fleksibilitas
+// Memudahkan pembuatan tabel dengan berbagai tipe data
+
 package com.github.repo.tracker.ui;
 
 import javax.swing.table.AbstractTableModel;
@@ -7,8 +11,9 @@ import java.util.function.Function;
 
 /**
  * Model tabel generik yang dapat dipakai untuk berbagai tipe data.
- * Memanfaatkan Program Generik (syarat 1).
- *
+ * Model tabel yang bisa digunakan untuk berbagai jenis data
+ Menggunakan generic programming untuk fleksibilitas
+ Memudahkan pembuatan tabel dengan berbagai tipe data
  * @param <T> tipe data baris
  */
 public class GenericTableModel<T> extends AbstractTableModel {

@@ -1,3 +1,6 @@
+// Kelas utama aplikasi
+// Menginisialisasi JavaFX dan Swing
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */

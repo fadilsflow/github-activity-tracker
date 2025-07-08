@@ -1,4 +1,4 @@
-# GitHub Repository Tracker
+<!-- # GitHub Repository Tracker -->
 
 A Java Swing application for tracking GitHub repositories and their activities. This application allows users to search for GitHub users, view their repositories, and monitor repository activities including commits, stars, and forks.
 

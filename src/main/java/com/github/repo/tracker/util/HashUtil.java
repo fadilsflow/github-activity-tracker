@@ -1,3 +1,7 @@
+// Utilitas untuk enkripsi menggunakan SHA-256
+// Digunakan untuk mengamankan password
+// Implementasi sederhana tapi aman
+
 package com.github.repo.tracker.util;
 
 import java.security.MessageDigest;

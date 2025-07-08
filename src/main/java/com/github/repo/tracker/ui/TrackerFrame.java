@@ -1,3 +1,7 @@
+// Jendela utama aplikasi
+// Menampilkan daftar repository dalam tabel
+// Fitur pencarian, sorting, dan filter repository
+
 package com.github.repo.tracker.ui;
 
 import com.github.repo.tracker.db.RepoDatabase;

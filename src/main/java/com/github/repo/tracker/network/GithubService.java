@@ -1,3 +1,7 @@
+// Kelas untuk berkomunikasi dengan API GitHub
+// Menggunakan HttpClient untuk request data
+// Mengubah response JSON menjadi objek Java menggunakan Gson
+
 package com.github.repo.tracker.network;
 
 import com.github.repo.tracker.model.Commit;

@@ -1,3 +1,7 @@
+// Mengelola teks dalam berbagai bahasa
+// Mendukung bahasa Indonesia dan Inggris
+// Memudahkan pergantian bahasa secara dinamis
+
 package com.github.repo.tracker.util;
 
 import java.util.Locale;

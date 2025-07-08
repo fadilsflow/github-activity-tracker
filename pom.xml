@@ -39,14 +39,14 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <mainClass>${exec.mainClass}</mainClass>
-                </configuration>
-            </plugin>
+             <plugin>
+     <groupId>org.codehaus.mojo</groupId>
+     <artifactId>exec-maven-plugin</artifactId>
+     <version>3.1.0</version>
+     <configuration>
+       <mainClass>com.github.repo.tracker.GithubRepoTracker</mainClass>
+     </configuration>
+   </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

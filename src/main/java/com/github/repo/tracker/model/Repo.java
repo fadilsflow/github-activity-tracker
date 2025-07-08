@@ -1,3 +1,7 @@
+// Model untuk repository GitHub
+// Menggunakan anotasi @SerializedName untuk mapping JSON dari API GitHub
+// Menyimpan informasi lengkap tentang sebuah repository
+
 package com.github.repo.tracker.model;
 
 import com.google.gson.annotations.SerializedName;
@@ -5,9 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.time.Instant;
 
-/**
- * Representasi sederhana dari sebuah repository GitHub.
- */
+
 public class Repo implements Serializable {
 
     private static final long serialVersionUID = 1L;
